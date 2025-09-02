@@ -1,4 +1,4 @@
-#import "@preview/zebraw:0.3.0": *
+#import "@preview/zebraw:0.5.5": *
 
 #let normal_text_size = 13pt;
 
@@ -117,7 +117,8 @@
   show raw.where(block: false): set text(features: (calt: 1))
 
   // zebraw package style
-  show: zebraw.with(inset: (top: 4pt, bottom: 4pt, left: 0pt, right: 0pt))
+  show: zebraw.with(inset: (top: 4pt, bottom: 4pt, left: 4pt, right: 4pt), indentation: 2, hanging-indent: true)
 
   body
 }
+
