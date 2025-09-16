@@ -15,7 +15,7 @@
 
 #let default_style(body) = {
   // page default style
-  set page(paper: "a4", numbering: "1", number-align: center, margin: (x: 1.25cm, y: 1cm))
+  set page(paper: "a4", numbering: "1", number-align: center, margin: (x: 1.8cm, y: 1.2cm))
 
   // paragraph default style
   set par(
