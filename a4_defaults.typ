@@ -113,8 +113,6 @@
     outset: (y: 3pt),
     radius: 0.2em,
   )
-  // turns on ligature for inline code blocks
-  show raw.where(block: false): set text(features: (calt: 1))
 
   // zebraw package style
   show: zebraw.with(inset: (top: 4pt, bottom: 4pt, left: 4pt, right: 4pt), indentation: 2, hanging-indent: true)
