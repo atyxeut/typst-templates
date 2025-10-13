@@ -32,74 +32,7 @@
   )
 
   // heading default style
-  set heading(numbering: "1.1")
-  // put numbering on the right for certain headings
-  show heading: it => {
-    let include_list = ("Proposition",)
-    let is_special_heading(content) = {
-      if type(content) == str {
-        for s in include_list {
-          if content.starts-with(s) {
-            return true
-          }
-        }
-      } else {
-        for s in include_list {
-          if content.first().fields().values().first().starts-with(s) {
-            return true
-          }
-        }
-      }
-      return false
-    }
-
-    let numbering_left_aligned_it = block({
-      counter(heading).display(it.numbering)
-      h(0.3em)
-      it.body
-    })
-
-    let numbering_right_aligned_it = block({
-      it.body
-      h(0.3em)
-      counter(heading).display(it.numbering)
-    })
-
-    if it.level == 1 {
-      set text(normal_text_size + 6pt)
-      numbering_left_aligned_it
-    } else if it.level == 2 {
-      set text(normal_text_size + 3pt)
-      let content = it.body.fields().values().first()
-      if type(content) == str {
-        if is_special_heading(content) {
-          numbering_right_aligned_it
-        } else {
-          numbering_left_aligned_it
-        }
-      } else {
-        if is_special_heading(content) {
-          block({
-            content.first().fields().values().first()
-            h(0.3em)
-            counter(heading).display(it.numbering)
-            h(0.3em)
-            content.slice(1).join()
-          })
-        } else {
-          numbering_left_aligned_it
-        }
-      }
-    } else if it.level == 3 {
-      numbering_left_aligned_it
-    } else if it.level == 4 {
-      // set text(normal_text_size - 3pt)
-      numbering_left_aligned_it
-    } else {
-      // set text(normal_text_size - 6pt)
-      numbering_left_aligned_it
-    }
-  }
+  set heading(numbering: none)
 
   // terms default style
   set terms(hanging-indent: 0em)
