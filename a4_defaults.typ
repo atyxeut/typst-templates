@@ -26,7 +26,7 @@
   // text default style
   set text(
     hyphenate: true,
-    font: "Maple Mono NL NF",
+    font: "Maple Mono NF",
     size: normal_text_size,
     weight: "light",
   )
@@ -41,7 +41,7 @@
   show math.equation.where(block: false): it => h(0.125em, weak: true) + it + h(0.125em, weak: true)
 
   // code block default style, ligature off
-  show raw: set text(font: "Maple Mono NL NF", size: 10pt, features: (calt: 0))
+  show raw: set text(font: "Maple Mono NF", size: 10pt, features: (calt: 0))
 
   // inline code block default style
   show raw.where(block: false): box.with(
