@@ -1,4 +1,4 @@
-#import "@preview/zebraw:0.5.5": *
+#import "@preview/zebraw:0.6.3": *
 
 #let normal_text_size = 13pt;
 
@@ -52,4 +52,3 @@
 
   body
 }
-
