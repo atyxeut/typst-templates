@@ -1,6 +1,6 @@
 #import "@preview/zebraw:0.6.3": *
 
-#let normal_text_size = 13pt;
+#let normal_text_size = 12pt;
 
 // alias of numbered math.equation
 #let eqn(content) = {
@@ -8,14 +8,14 @@
 }
 
 // display a right aligned Q.E.D. symbol
-#let QED() = {
+#let rqed() = {
   h(1fr)
   $qed$
 }
 
-#let default_style(body) = {
+#let style(body) = {
   // page default style
-  set page(paper: "a4", numbering: "1", number-align: center, margin: (x: 1.8cm, y: 1.2cm))
+  set page(paper: "a4", numbering: "1", number-align: center, margin: (x: 1.6cm, y: 1.2cm))
 
   // paragraph default style
   set par(
@@ -26,7 +26,7 @@
   // text default style
   set text(
     hyphenate: true,
-    font: ("Libertinus Serif", "Noto Sans SC"),
+    font: "Maple Mono NL NF",
     size: normal_text_size,
     weight: "light",
   )
@@ -38,7 +38,8 @@
   set terms(hanging-indent: 0em)
 
   // code block default style, ligature off
-  show raw: set text(font: ("Fira Code", "Noto Sans SC"), size: 10pt, features: (calt: 0))
+  show raw: set text(font: "Maple Mono NL NF", size: 10pt, features: (calt: 0))
+
   // inline code block default style
   show raw.where(block: false): box.with(
     fill: luma(240),
@@ -51,4 +52,12 @@
   show: zebraw.with(inset: (top: 4pt, bottom: 4pt, left: 4pt, right: 4pt), indentation: 2, hanging-indent: true)
 
   body
+}
+
+#let header(title) = {
+  align(center)[
+    #set text(size: 18pt)
+    #title
+  ]
+  line(length: 100%, stroke: 0.75pt + rgb("#000000"))
 }
