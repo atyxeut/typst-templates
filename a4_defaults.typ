@@ -37,6 +37,9 @@
   // terms default style
   set terms(hanging-indent: 0em)
 
+  // let inline math equations look better
+  show math.equation.where(block: false): it => h(0.125em, weak: true) + it + h(0.125em, weak: true)
+
   // code block default style, ligature off
   show raw: set text(font: "Maple Mono NL NF", size: 10pt, features: (calt: 0))
 
