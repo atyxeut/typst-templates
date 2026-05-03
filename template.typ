@@ -1,6 +1,6 @@
 #import "@preview/zebraw:0.6.3": *
 
-#let normal_text_size = 12pt;
+#let normal_text_size = 13pt;
 
 // alias of numbered math.equation
 #let eqn(content) = {
@@ -19,7 +19,7 @@
 
   // paragraph default style
   set par(
-    justify: true,
+    justify: false,
     linebreaks: "simple",
   )
 
@@ -59,8 +59,28 @@
 
 #let header(title) = {
   align(center)[
-    #set text(size: 18pt)
+    #set text(size: 20pt)
     #title
   ]
-  line(length: 100%, stroke: 0.75pt + rgb("#000000"))
+  line(length: 100%, stroke: 0.75pt + black)
 }
+
+#let _content_block_insect = 14pt
+#let content_block(color: blue, title, content) = block(
+  fill: color.lighten(90%),
+  stroke: 0.5pt + color.lighten(45%),
+  radius: 2pt,
+  width: 100%,
+  inset: _content_block_insect,
+  above: 2em,
+)[
+  #place(
+    top + left,
+    dx: 10pt - _content_block_insect,
+    dy: -10pt - _content_block_insect,
+    rect(fill: color.lighten(22.5%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
+      #text(fill: white, title)
+    ],
+  )
+  #content
+]
