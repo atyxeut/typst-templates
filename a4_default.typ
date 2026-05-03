@@ -13,7 +13,7 @@
   $qed$
 }
 
-#let style(body) = {
+#let a4_default_style(body) = {
   // page default style
   set page(paper: "a4", numbering: "1", number-align: center, margin: (x: 1.6cm, y: 1.2cm))
 
