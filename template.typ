@@ -161,7 +161,13 @@
   }
   link(
     mark(chapter, title, name: name, suffix: suffix),
-    text(underline(desc), weight: "bold"),
+    text(weight: "bold")[#show math.equation.where(block: false): it => box(
+        it,
+        stroke: (bottom: 0.2mm + black),
+        outset: (bottom: 0.7mm),
+        inset: (left: 1mm, right: 1mm),
+      )
+      #underline(desc)],
   )
 }
 
