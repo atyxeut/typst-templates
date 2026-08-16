@@ -136,6 +136,8 @@
   [
     #text(fill: proof_background_color, weight: "bold")[#title] #h(4pt)
     #content
+    #show math.equation: set text(font: "New Computer Modern")
+
     #h(1fr) #text(fill: proof_background_color)[$qed$]
   ],
 )
