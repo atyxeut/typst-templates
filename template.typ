@@ -145,7 +145,7 @@
 #let define_functions(label_prefix) = {
   let proposition_counter = counter(label_prefix)
 
-  let label_to(title, suffix: "") = label(label_string(label_prefix, title, suffix: suffix))
+  let cur_label(title, suffix: "") = label(label_string(label_prefix, title, suffix: suffix))
   let definition(title, content) = definition_impl(label_prefix, title, content)
   let proposition(content) = proposition_impl(label_prefix, proposition_counter, content)
   let theorem(title, content) = theorem_impl(label_prefix, title, content)
@@ -153,7 +153,7 @@
   let example(source: "", content) = example_impl(label_prefix, source, content)
 
   (
-    label_to: label_to,
+    cur_label: cur_label,
     definition: definition,
     proposition: proposition,
     theorem: theorem,
