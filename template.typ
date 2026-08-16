@@ -79,8 +79,8 @@
   }
 }
 
-#let label_string(chapter, title, name, suffix: "") = (
-  chapter + "-" + title + "-" + name + if suffix != "" { "-" + suffix }
+#let label_string(chapter, title: auto, name: auto, suffix: auto) = (
+  chapter + if title != auto { "-" + title } + if name != auto { "-" + name } + if suffix != auto { "-" + suffix }
 )
 
 #let definition_background_color = rgb("#243daf")
@@ -88,7 +88,7 @@
   definition_background_color,
   name,
   content,
-  label_string(chapter, title, take_until(name), suffix: "定义"),
+  label_string(chapter, title: title, name: take_until(name), suffix: "定义"),
 )
 
 #let proposition_background_color = rgb("#d97706")
@@ -100,7 +100,7 @@
       proposition_background_color,
       name,
       content,
-      label_string(chapter, title, name),
+      label_string(chapter, title: title, name: name),
     )
   }
 ]
@@ -110,7 +110,7 @@
   theorem_background_color,
   name,
   content,
-  label_string(chapter, title, take_until(name)),
+  label_string(chapter, title: title, name: take_until(name)),
 )
 
 #let corollary_background_color = rgb("#7e22ce")
@@ -118,7 +118,7 @@
   corollary_background_color,
   name,
   content,
-  label_string(chapter, title, take_until(name)),
+  label_string(chapter, title: title, name: take_until(name)),
 )
 
 #let example_background_color = rgb("#0e7490")
@@ -128,7 +128,7 @@
     example_background_color,
     name,
     content,
-    label_string(chapter, title, take_until(name)),
+    label_string(chapter, title: title, name: take_until(name)),
   )
 }
 
@@ -144,13 +144,26 @@
   ],
 )
 
-#let mark(chapter, title, name, suffix: "") = label(
-  label_string(chapter, title, name, suffix: suffix),
+// use standard label if there is no title
+#let mark(chapter, title, name: auto, suffix: auto) = label(
+  label_string(chapter, title: title, name: name, suffix: suffix),
 )
 
-#let portal(label, description) = link(label)[
-  #text("[" + description + "]", weight: "bold")
-]
+#let portal(chapter, title, name, suffix: auto, description: auto, omit_chapter: false, omit_title: false) = {
+  let desc = if description != auto {
+    description
+  } else {
+    if omit_chapter and omit_title {
+      label_string(name, suffix: suffix)
+    } else if omit_chapter {
+      label_string(title, name: name, suffix: suffix)
+    }
+  }
+  link(
+    mark(chapter, title, name: name, suffix: suffix),
+    text(underline(desc), weight: "bold"),
+  )
+}
 
 #let define_functions(chapter, title) = {
   let prop_counter = counter(chapter + "-" + title)
@@ -161,12 +174,28 @@
   let cor(name, content) = corollary(chapter, title, name, content)
   let eg(source: "", content) = example(chapter, title, source, content)
 
-  // chapter mark: prefixed with "chapter-"
-  let cmark(title, name, suffix: "") = mark(chapter, title, name, suffix: suffix)
-  // local mark: prefixed with "chapter-title-"
-  let lmark(name, suffix: "") = cmark(title, name, suffix: suffix)
+  // chapter portal: target label is prefixed with "chapter-"
+  let cptl(title, name, suffix: auto, description: auto) = portal(
+    chapter,
+    title,
+    name,
+    suffix: suffix,
+    description: description,
+    omit_chapter: true,
+  )
 
-  (prop: prop, def: def, thm: thm, cor: cor, eg: eg, cmark: cmark, lmark: lmark)
+  // local portal: target label is prefixed with "chapter-title-"
+  let lptl(name, suffix: auto, description: auto) = portal(
+    chapter,
+    title,
+    name,
+    suffix: suffix,
+    description: description,
+    omit_chapter: true,
+    omit_title: true,
+  )
+
+  (prop: prop, def: def, thm: thm, cor: cor, eg: eg, cptl: cptl, lptl: lptl)
 }
 
 #let header(title) = {
