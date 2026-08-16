@@ -42,15 +42,6 @@
   body
 }
 
-#let take_until(string, delim: "(") = {
-  let pos = string.position(delim)
-  if pos == none {
-    string
-  } else {
-    string.slice(0, pos)
-  }
-}
-
 #let content_block(text_color: white, background_color, title, content, label_string) = {
   let cur_inset = 14pt
   [
@@ -79,62 +70,73 @@
   ]
 }
 
-#let label_string(label_prefix, title, suffix: "") = label_prefix + "-" + title + if suffix != "" { "-" + suffix }
+#let take_until(string, delim: "(") = {
+  let pos = string.position(delim)
+  if pos == none {
+    string
+  } else {
+    string.slice(0, pos)
+  }
+}
+
+#let label_string(chapter, title, name, suffix: "") = (
+  chapter + "-" + title + "-" + name + if suffix != "" { "-" + suffix }
+)
 
 #let definition_background_color = rgb("#243daf")
-#let definition_impl(label_prefix, title, content) = content_block(
+#let definition(chapter, title, name, content) = content_block(
   definition_background_color,
-  title,
+  name,
   content,
-  label_string(label_prefix, take_until(title), suffix: "定义"),
+  label_string(chapter, title, take_until(name), suffix: "定义"),
 )
 
 #let proposition_background_color = rgb("#d97706")
-#let proposition_impl(label_prefix, counter, content) = [
+#let proposition(chapter, title, counter, content) = [
   #counter.step()
   #context {
-    let title = "命题" + counter.display()
+    let name = "命题" + counter.display()
     content_block(
       proposition_background_color,
-      title,
+      name,
       content,
-      label_string(label_prefix, title),
+      label_string(chapter, title, name),
     )
   }
 ]
 
 #let theorem_background_color = rgb("#be123c")
-#let theorem_impl(label_prefix, title, content) = content_block(
+#let theorem(chapter, title, name, content) = content_block(
   theorem_background_color,
-  title,
+  name,
   content,
-  label_string(label_prefix, take_until(title)),
+  label_string(chapter, title, take_until(name)),
 )
 
 #let corollary_background_color = rgb("#7e22ce")
-#let corollary_impl(label_prefix, title, content) = content_block(
+#let corollary(chapter, title, name, content) = content_block(
   corollary_background_color,
-  title,
+  name,
   content,
-  label_string(label_prefix, take_until(title)),
+  label_string(chapter, title, take_until(name)),
 )
 
 #let example_background_color = rgb("#0e7490")
-#let example_impl(label_prefix, source: "", content) = {
-  let title = "例" + if source != "" { " " + "(" + source + ")" }
+#let example(chapter, title, source: "", content) = {
+  let name = "例" + if source != "" { " " + "(" + source + ")" }
   content_block(
     example_background_color,
-    title,
+    name,
     content,
-    label_string(label_prefix, take_until(title)),
+    label_string(chapter, title, take_until(name)),
   )
 }
 
 #let proof_background_color = black
-#let proof(title: "证明", content) = block(
+#let proof(content) = block(
   inset: (left: 0pt, right: 0pt, top: 0pt, bottom: 0pt),
   [
-    #text(fill: proof_background_color, weight: "bold")[#title] #h(4pt)
+    #text(fill: proof_background_color, weight: "bold")[证明] #h(4pt)
     #content
     #show math.equation: set text(font: "New Computer Modern")
 
@@ -142,27 +144,30 @@
   ],
 )
 
-#let define_functions(label_prefix) = {
-  let proposition_counter = counter(label_prefix)
+#let mark(chapter, title, name, suffix: "") = label(
+  label_string(chapter, title, name, suffix: suffix),
+)
 
-  let cur_label(title, suffix: "") = label(label_string(label_prefix, title, suffix: suffix))
-  let definition(title, content) = definition_impl(label_prefix, title, content)
-  let proposition(content) = proposition_impl(label_prefix, proposition_counter, content)
-  let theorem(title, content) = theorem_impl(label_prefix, title, content)
-  let corollary(title, content) = corollary_impl(label_prefix, title, content)
-  let example(source: "", content) = example_impl(label_prefix, source, content)
+#let portal(label, description) = link(label)[
+  #text("[" + description + "]", weight: "bold")
+]
 
-  (
-    cur_label: cur_label,
-    definition: definition,
-    proposition: proposition,
-    theorem: theorem,
-    corollary: corollary,
-    example: example,
-  )
+#let define_functions(chapter, title) = {
+  let prop_counter = counter(chapter + "-" + title)
+  let prop(content) = proposition(chapter, title, prop_counter, content)
+
+  let def(name, content) = definition(chapter, title, name, content)
+  let thm(name, content) = theorem(chapter, title, name, content)
+  let cor(name, content) = corollary(chapter, title, name, content)
+  let eg(source: "", content) = example(chapter, title, source, content)
+
+  // chapter mark: prefixed with "chapter-"
+  let cmark(title, name, suffix: "") = mark(chapter, title, name, suffix: suffix)
+  // local mark: prefixed with "chapter-title-"
+  let lmark(name, suffix: "") = cmark(title, name, suffix: suffix)
+
+  (prop: prop, def: def, thm: thm, cor: cor, eg: eg, cmark: cmark, lmark: lmark)
 }
-
-#let link_to(label, description) = link(label)[#text("[" + description + "]", weight: "bold")]
 
 #let header(title) = {
   align(center)[
