@@ -42,7 +42,7 @@
   body
 }
 
-#let take_until(string, delim: " ") = {
+#let take_until(string, delim: "(") = {
   let pos = string.position(delim)
   if pos == none {
     string
