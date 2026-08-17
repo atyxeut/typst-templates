@@ -210,6 +210,9 @@
   line(length: 100%, stroke: 0.75pt + black)
 }
 
+#let rfact(x, n) = $#x^overline(#n)$
+#let ffact(x, n) = $#x^underline(#n)$
+
 // alias of numbered math.equation
 #let eqn(content) = {
   math.equation(block: true, numbering: "(1)", content)
