@@ -79,8 +79,8 @@
   }
 }
 
-#let label_string(chapter, title: auto, name: auto, suffix: auto) = (
-  chapter + if title != auto { "-" + title } + if name != auto { "-" + name } + if suffix != auto { "-" + suffix }
+#let label_string(chapter, title: auto, name: auto) = (
+  chapter + if title != auto { "-" + title } + if name != auto { "-" + name }
 )
 
 #let definition_background_color = rgb("#243daf")
@@ -88,7 +88,7 @@
   definition_background_color,
   name,
   content,
-  label_string(chapter, title: title, name: take_until(name), suffix: "定义"),
+  label_string(chapter, title: title, name: take_until(name)),
 )
 
 #let proposition_background_color = rgb("#d97706")
@@ -145,22 +145,22 @@
 )
 
 // use standard label if there is no title
-#let mark(chapter, title, name: auto, suffix: auto) = label(
-  label_string(chapter, title: title, name: name, suffix: suffix),
+#let mark(chapter, title, name: auto) = label(
+  label_string(chapter, title: title, name: name),
 )
 
-#let portal(chapter, title, name, suffix: auto, description: auto, omit_chapter: false, omit_title: false) = {
-  let desc = if description != auto {
-    description
+#let portal(chapter, title, name, desc: auto, omit_chapter: false, omit_title: false) = {
+  let desc = if desc != auto {
+    desc
   } else {
     if omit_chapter and omit_title {
-      label_string(name, suffix: suffix)
+      label_string(name)
     } else if omit_chapter {
-      label_string(title, name: name, suffix: suffix)
+      label_string(title, name: name)
     }
   }
   link(
-    mark(chapter, title, name: name, suffix: suffix),
+    mark(chapter, title, name: name),
     text(weight: "bold")[#show math.equation.where(block: false): it => box(
         it,
         stroke: (bottom: 0.2mm + black),
@@ -181,27 +181,25 @@
   let eg(source: "", content) = example(chapter, title, source, content)
 
   // chapter portal: target label is prefixed with "chapter-"
-  let cptl(title, name, suffix: auto, description: auto) = portal(
+  let cptl(title, name, desc: auto) = portal(
     chapter,
     title,
     name,
-    suffix: suffix,
-    description: description,
+    desc: desc,
     omit_chapter: true,
   )
 
   // local portal: target label is prefixed with "chapter-title-"
-  let lptl(name, suffix: auto, description: auto) = portal(
+  let ptl(name, desc: auto) = portal(
     chapter,
     title,
     name,
-    suffix: suffix,
-    description: description,
+    desc: desc,
     omit_chapter: true,
     omit_title: true,
   )
 
-  (prop: prop, def: def, thm: thm, cor: cor, eg: eg, cptl: cptl, lptl: lptl)
+  (prop: prop, def: def, thm: thm, cor: cor, eg: eg, cptl: cptl, ptl: ptl)
 }
 
 #let header(title) = {
