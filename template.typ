@@ -15,7 +15,7 @@
 
   set text(
     cjk-latin-spacing: auto,
-    spacing: char_width / 2,
+    spacing: char_width / 4,
     size: char_height,
     font: text_font,
     weight: "light",
@@ -35,11 +35,8 @@
   let space = h(1mm, weak: true)
   show math.equation: set text(font: math_font)
   show math.equation.where(block: false): it => {
-    let it = {
-      show regex("[,:;]"): char => char + space
-      it
-    }
-    space + it + space
+    show regex("[,:;]"): char => char + space
+    it
   }
 
   // inline code block setting
