@@ -202,19 +202,20 @@
   (prop: prop, def: def, thm: thm, cor: cor, eg: eg, cptl: cptl, ptl: ptl)
 }
 
-#let header(title) = {
+#let header(content) = {
   align(center)[
-    #show heading: it => text(title, size: 22pt, weight: "regular")
-    #heading(title)
+    #show heading: it => text(content, size: 22pt, weight: "regular")
+    #heading(content)
   ]
   line(length: 100%, stroke: 0.75pt + black)
 }
-
-#let rfact(x, n) = $#x^overline(#n)$
-#let ffact(x, n) = $#x^underline(#n)$
 
 // alias of numbered math.equation
 #let eqn(content) = {
   math.equation(block: true, numbering: "(1)", content)
 }
+
 #let eqnrect(content) = $markrect(padding: #0.2em, content)$;
+
+#let rfact(x, n) = $#x^overline(#n)$
+#let ffact(x, n) = $#x^underline(#n)$
