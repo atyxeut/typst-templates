@@ -219,3 +219,8 @@
 
 #let rfact(x, n) = $#x^overline(#n)$
 #let ffact(x, n) = $#x^underline(#n)$
+
+#let stirling1(n, k) = $vec(#n, #k, delim: "[")$
+#let stirling2(n, k) = $vec(#n, #k, delim: "{")$
+#let eulerian(n, k) = $vec(#n, #k, delim: chevron)$
+#let multinom(n, ..k) = $binom(#n, #k.pos().join(","))$
