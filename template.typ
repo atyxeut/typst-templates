@@ -42,155 +42,165 @@
   body
 }
 
-#let content_block(text_color: white, background_color, title, content, label_string) = {
-  let cur_inset = 14pt
+#let begin_chapter(chapter) = {
   [
-    #v(1em)
-    #shadow(radius: 2pt, dx: 1pt, dy: 1pt, blur: 2pt, fill: background_color.lighten(80%))[
-      #block(
-        fill: background_color.lighten(95%),
-        stroke: 0.5pt + background_color.lighten(50%),
-        radius: 2pt,
-        width: 100%,
-        inset: cur_inset,
-        above: 2em,
-      )[
-        #place(
-          top + left,
-          dx: 10pt - cur_inset,
-          dy: -10pt - cur_inset,
-          rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
-            #text(weight: "regular", fill: text_color, title)
-          ],
-        )
-        #content
-      ]
+    #align(center)[
+      #show heading: it => text(chapter, size: 22pt, weight: "regular")
+      #heading(chapter)
     ]
-    #label(label_string)
+    #line(length: 100%, stroke: 0.75pt + black)
+    #label(chapter)
   ]
 }
 
-#let take_until(string, delim: "(") = {
-  let pos = string.position(delim)
-  if pos == none {
-    string
-  } else {
-    string.slice(0, pos)
+#let begin_title(chapter, title) = { [= #title #label(chapter + "-" + title)] }
+
+#let define_functions(chapter, title) = {
+  let label_string(chapter, title: auto, name: auto) = (
+    chapter + if title != auto { "-" + title } + if name != auto { "-" + name }
+  )
+
+  let take_until(string, delim: "(") = {
+    let pos = string.position(delim)
+    if pos == none {
+      string
+    } else {
+      string.slice(0, pos)
+    }
   }
-}
 
-#let label_string(chapter, title: auto, name: auto) = (
-  chapter + if title != auto { "-" + title } + if name != auto { "-" + name }
-)
-
-#let definition_background_color = rgb("#243daf")
-#let definition(chapter, title, name, content) = content_block(
-  definition_background_color,
-  name,
-  content,
-  label_string(chapter, title: title, name: take_until(name)),
-)
-
-#let proposition_background_color = rgb("#d97706")
-#let proposition(chapter, title, counter, content) = [
-  #counter.step()
-  #context {
-    let name = "命题" + counter.display()
-    content_block(
-      proposition_background_color,
-      name,
-      content,
-      label_string(chapter, title: title, name: name),
-    )
+  let content_block(text_color: white, background_color, title, content, target) = {
+    let cur_inset = 14pt
+    [
+      #v(1em)
+      #shadow(radius: 2pt, dx: 1pt, dy: 1pt, blur: 2pt, fill: background_color.lighten(80%))[
+        #block(
+          fill: background_color.lighten(95%),
+          stroke: 0.5pt + background_color.lighten(50%),
+          radius: 2pt,
+          width: 100%,
+          inset: cur_inset,
+          above: 2em,
+        )[
+          #place(
+            top + left,
+            dx: 10pt - cur_inset,
+            dy: -10pt - cur_inset,
+            rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
+              #text(weight: "regular", fill: text_color, title)
+            ],
+          )
+          #content
+        ]
+      ]
+      #label(target)
+    ]
   }
-]
 
-#let theorem_background_color = rgb("#be123c")
-#let theorem(chapter, title, name, content) = content_block(
-  theorem_background_color,
-  name,
-  content,
-  label_string(chapter, title: title, name: take_until(name)),
-)
-
-#let corollary_background_color = rgb("#7e22ce")
-#let corollary(chapter, title, name, content) = content_block(
-  corollary_background_color,
-  name,
-  content,
-  label_string(chapter, title: title, name: take_until(name)),
-)
-
-#let example_background_color = rgb("#334155")
-#let example(chapter, title, source: "", content) = {
-  let name = "例" + if source != "" { " " + "(" + source + ")" }
-  content_block(
-    example_background_color,
+  // definition block
+  let def_bg_color = rgb("#243daf")
+  let def(name, content) = content_block(
+    def_bg_color,
     name,
     content,
     label_string(chapter, title: title, name: take_until(name)),
   )
-}
 
-#let proof_background_color = black
-#let proof(content) = block(
-  inset: (left: 0pt, right: 0pt, top: 0pt, bottom: 0pt),
-  [
-    #text(fill: proof_background_color, weight: "bold")[证明] #h(4pt)
-    #content
-    #show math.equation: set text(font: "New Computer Modern")
-
-    #h(1fr) #text(fill: proof_background_color)[$qed$]
-  ],
-)
-
-// use standard label if there is no title
-#let mark(chapter, title, name: auto) = label(
-  label_string(chapter, title: title, name: name),
-)
-
-#let portal(chapter, title, name, desc: auto, omit_chapter: false, omit_title: false) = {
-  let desc = if desc != auto {
-    desc
-  } else {
-    if omit_chapter and omit_title {
-      label_string(name)
-    } else if omit_chapter {
-      label_string(title, name: name)
-    }
-  }
-  link(
-    mark(chapter, title, name: name),
-    text(weight: "bold")[#show math.equation.where(block: false): it => box(
-        it,
-        stroke: (bottom: 0.2mm + black),
-        outset: (bottom: 0.7mm),
-        inset: (left: 1mm, right: 1mm),
+  // proposition block
+  let prop_counter = counter(chapter + "-" + title + "prop")
+  let prop_bg_color = rgb("#d97706")
+  let prop(content) = [
+    #prop_counter.step()
+    #context {
+      let name = "命题" + prop_counter.display()
+      content_block(
+        prop_bg_color,
+        name,
+        content,
+        label_string(chapter, title: title, name: name),
       )
-      #underline(desc)],
+    }
+  ]
+
+  // theorem block
+  let thm_bg_color = rgb("#be123c")
+  let thm(name, content) = content_block(
+    thm_bg_color,
+    name,
+    content,
+    label_string(chapter, title: title, name: take_until(name)),
   )
-}
 
-#let define_functions(chapter, title) = {
-  let prop_counter = counter(chapter + "-" + title)
-  let prop(content) = proposition(chapter, title, prop_counter, content)
+  // corollary block
+  let cor_bg_color = rgb("#7e22ce")
+  let cor(name, content) = content_block(
+    cor_bg_color,
+    name,
+    content,
+    label_string(chapter, title: title, name: take_until(name)),
+  )
 
-  let def(name, content) = definition(chapter, title, name, content)
-  let thm(name, content) = theorem(chapter, title, name, content)
-  let cor(name, content) = corollary(chapter, title, name, content)
-  let eg(source: "", content) = example(chapter, title, source: source, content)
+  // example block
+  let eg_counter = counter(chapter + "-" + title + "eg")
+  let eg_bg_color = rgb("#334155")
+  let eg(source: "", content) = [
+    #eg_counter.step()
+    #context {
+      let name = "例" + eg_counter.display() + if source != "" { "(" + source + ")" }
+      content_block(
+        eg_bg_color,
+        name,
+        content,
+        label_string(chapter, title: title, name: take_until(name)),
+      )
+    }
+  ]
 
-  // chapter portal: target label is prefixed with "chapter-"
-  let cptl(title, name, desc: auto) = portal(
+  // proof block
+  let proof_bg_color = black
+  let proof(name: "证明", content) = block(
+    inset: (left: 0pt, right: 0pt, top: 0pt, bottom: 0pt),
+    [
+      #text(fill: proof_bg_color, weight: "bold")[#name] #h(4pt)
+      #content
+      #show math.equation: set text(font: "New Computer Modern")
+
+      #h(1fr) #text(fill: proof_bg_color)[$qed$]
+    ],
+  )
+
+  // a hyperlink to <chapter-title-name>
+  let tp(chapter, title, name, desc: auto, omit_chapter: false, omit_title: false) = {
+    let desc = if desc != auto {
+      desc
+    } else {
+      if omit_chapter and omit_title {
+        label_string(name)
+      } else if omit_chapter {
+        label_string(title, name: name)
+      }
+    }
+    link(
+      label(label_string(chapter, title: title, name: name)),
+      text(weight: "bold")[#show math.equation.where(block: false): it => box(
+          it,
+          stroke: (bottom: 0.2mm + black),
+          outset: (bottom: 0.7mm),
+          inset: (left: 1mm, right: 1mm),
+        )
+        #underline(desc)],
+    )
+  }
+  // a hyperlink with "chapter-" already filled
+  let ctp(title, name, desc: auto) = tp(
     chapter,
     title,
     name,
     desc: desc,
     omit_chapter: true,
   )
-
-  // local portal: target label is prefixed with "chapter-title-"
-  let ptl(name, desc: auto) = portal(
+  // a hyperlink with "chapter-title-" already filled
+  let cttp(name, desc: auto) = tp(
     chapter,
     title,
     name,
@@ -199,15 +209,7 @@
     omit_title: true,
   )
 
-  (prop: prop, def: def, thm: thm, cor: cor, eg: eg, cptl: cptl, ptl: ptl)
-}
-
-#let header(content) = {
-  align(center)[
-    #show heading: it => text(content, size: 22pt, weight: "regular")
-    #heading(content)
-  ]
-  line(length: 100%, stroke: 0.75pt + black)
+  (def: def, prop: prop, thm: thm, cor: cor, eg: eg, proof: proof, tp: tp, ctp: ctp, cttp: cttp)
 }
 
 // alias of numbered math.equation
