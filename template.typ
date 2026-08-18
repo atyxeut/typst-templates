@@ -121,7 +121,7 @@
   label_string(chapter, title: title, name: take_until(name)),
 )
 
-#let example_background_color = rgb("#0e7490")
+#let example_background_color = rgb("#334155")
 #let example(chapter, title, source: "", content) = {
   let name = "例" + if source != "" { " " + "(" + source + ")" }
   content_block(
