@@ -178,7 +178,7 @@
   let def(name, content) = definition(chapter, title, name, content)
   let thm(name, content) = theorem(chapter, title, name, content)
   let cor(name, content) = corollary(chapter, title, name, content)
-  let eg(source: "", content) = example(chapter, title, source, content)
+  let eg(source: "", content) = example(chapter, title, source: source, content)
 
   // chapter portal: target label is prefixed with "chapter-"
   let cptl(title, name, desc: auto) = portal(
