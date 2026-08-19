@@ -100,6 +100,7 @@
             dy: -10pt - cur_inset,
             rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
               #text(weight: "regular", fill: text_color, title)
+              #h(0.1mm)
             ],
           )
           #content
