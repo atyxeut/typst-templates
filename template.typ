@@ -2,9 +2,10 @@
 #import "@preview/shadowed:0.3.0": *
 #import "@preview/zebraw:0.6.3": *
 
+#let text_font = "Maple Mono NL NF"
 #let char_width = 4mm
 #let char_height = char_width / 1.2
-#let text_font = "Maple Mono NL NF"
+
 #let math_font = "XCharter Math"
 
 #let style(body) = {
@@ -33,7 +34,7 @@
   set page(width: page_width, height: auto, margin: (x: margin_x, y: margin_y))
 
   let space = h(1mm, weak: true)
-  show math.equation: set text(font: math_font)
+  show math.equation: set text(font: math_font, weight: "regular")
   show math.equation.where(block: false): it => {
     show regex("[,:;]"): char => char + space
     it
@@ -228,11 +229,20 @@
 
 #let keyword(content) = text(content, weight: "medium")
 
-// alias of numbered math.equation
+// most frequently used equation
+#let eq(content, rmargin: true) = {
+  h(char_width / 8, weak: true) + content + if rmargin { h(char_width / 12, weak: true) }
+}
+
+// when the equation is followed by a punctuation
+#let eqs(content) = eq(content, rmargin: false)
+
+// numbered block equation
 #let eqn(content) = {
   math.equation(block: true, numbering: "(1)", content)
 }
-#let eqnrect(content) = $markrect(padding: #0.2em, content)$;
+
+#let eqrect(content) = markrect(outset: char_width / 8, content);
 
 #let rfact(x, n) = $#x^overline(#n)$
 #let ffact(x, n) = $#x^underline(#n)$
@@ -240,4 +250,4 @@
 #let stirling1(n, k) = $vec(#n, #k, delim: "[")$
 #let stirling2(n, k) = $vec(#n, #k, delim: "{")$
 #let eulerian(n, k) = $vec(#n, #k, delim: chevron)$
-#let multinom(n, ..k) = $binom(#n, #k.pos().join("," + h(1mm, weak: true)))$
+#let multinom(n, ..k) = $binom(#n, #k.pos().join("," + h(char_width / 4, weak: true)))$
