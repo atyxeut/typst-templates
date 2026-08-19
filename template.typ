@@ -184,6 +184,15 @@
     ],
   )
 
+  // algorithm block
+  let algo_bg_color = rgb("#0e7490")
+  let algo(name, content) = content_block(
+    algo_bg_color,
+    name,
+    content,
+    label_string(chapter, title: title, name: take_until(name)),
+  )
+
   // a hyperlink to <chapter-title-name>
   let tp(chapter, title, name, desc: auto, omit_chapter: false, omit_title: false) = {
     let desc = if desc != auto {
@@ -224,7 +233,7 @@
     omit_title: true,
   )
 
-  (def: def, prop: prop, thm: thm, cor: cor, eg: eg, proof: proof, tp: tp, ctp: ctp, cttp: cttp)
+  (def: def, prop: prop, thm: thm, cor: cor, eg: eg, proof: proof, algo: algo, tp: tp, ctp: ctp, cttp: cttp)
 }
 
 #let keyword(content) = text(content, weight: "medium")
