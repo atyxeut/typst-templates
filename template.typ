@@ -172,7 +172,7 @@
   let proof(name: auto, content) = block(
     inset: (left: 0pt, right: 0pt, top: 0pt, bottom: 0pt),
     [
-      #text(fill: proof_bg_color, weight: "bold", "证明" + if name != auto { "(" + name + ")" }) #h(
+      #text(fill: proof_bg_color, weight: "bold", "证明" + if name != auto { name }) #h(
         char_width / 2,
         weak: true,
       )
