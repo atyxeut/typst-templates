@@ -8,6 +8,16 @@
 
 #let math_font = "XCharter Math"
 
+#let char_width_2 = char_width / 2;
+#let char_width_4 = char_width / 4;
+#let char_width_8 = char_width / 8;
+#let char_width_12 = char_width / 12;
+
+#let space_2 = h(char_width_2, weak: true)
+#let space_4 = h(char_width_4, weak: true)
+#let space_8 = h(char_width_8, weak: true)
+#let space_12 = h(char_width_12, weak: true)
+
 #let style(body) = {
   set heading(numbering: none)
   show heading.where(level: 1): it => text(it, size: char_height * 1.5)
@@ -16,7 +26,7 @@
 
   set text(
     cjk-latin-spacing: auto,
-    spacing: char_width / 4,
+    spacing: char_width_2,
     size: char_height,
     font: text_font,
     weight: "light",
@@ -33,10 +43,9 @@
   let page_width = char_count_per_line * char_width + margin_x * 2
   set page(width: page_width, height: auto, margin: (x: margin_x, y: margin_y))
 
-  let space = h(1mm, weak: true)
   show math.equation: set text(font: math_font, weight: "regular")
   show math.equation.where(block: false): it => {
-    show regex("[,:;]"): char => char + space
+    show regex("[,:;]"): char => char + space_4
     it
   }
 
@@ -67,181 +76,144 @@
 
 #let begin_title(chapter, title) = { [= #title #label(chapter + "-" + title)] }
 
-#let define_functions(chapter, title) = {
-  let label_string(chapter, title: auto, name: auto) = (
-    chapter + if title != auto { "-" + title } + if name != auto { "-" + name }
-  )
-
-  let take_until(string, delim: "(") = {
-    let pos = string.position(delim)
-    if pos == none {
-      string
-    } else {
-      string.slice(0, pos)
-    }
-  }
-
-  let content_block(text_color: white, background_color, title, content, target) = {
-    let cur_inset = 14pt
-    [
-      #v(1em)
-      #shadow(radius: 2pt, dx: 1pt, dy: 1pt, blur: 2pt, fill: background_color.lighten(80%))[
-        #block(
-          fill: background_color.lighten(95%),
-          stroke: 0.5pt + background_color.lighten(50%),
-          radius: 2pt,
-          width: 100%,
-          inset: cur_inset,
-          above: 2em,
-        )[
-          #place(
-            top + left,
-            dx: 10pt - cur_inset,
-            dy: -10pt - cur_inset,
-            rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
-              #text(weight: "regular", fill: text_color, title)
-              #h(0.1mm)
-            ],
-          )
-          #content
-        ]
-      ]
-      #label(target)
-    ]
-  }
-
-  // definition block
-  let def_bg_color = rgb("#243daf")
-  let def(name, content) = content_block(
-    def_bg_color,
-    name,
-    content,
-    label_string(chapter, title: title, name: take_until(name)),
-  )
-
-  // proposition block
-  let prop_counter = counter(chapter + "-" + title + "prop")
-  let prop_bg_color = rgb("#d97706")
-  let prop(content) = [
-    #prop_counter.step()
-    #context {
-      let name = "命题" + prop_counter.display()
-      content_block(
-        prop_bg_color,
-        name,
-        content,
-        label_string(chapter, title: title, name: name),
-      )
-    }
-  ]
-
-  // theorem block
-  let thm_bg_color = rgb("#be123c")
-  let thm(name, content) = content_block(
-    thm_bg_color,
-    name,
-    content,
-    label_string(chapter, title: title, name: take_until(name)),
-  )
-
-  // corollary block
-  let cor_bg_color = rgb("#7e22ce")
-  let cor(name, content) = content_block(
-    cor_bg_color,
-    name,
-    content,
-    label_string(chapter, title: title, name: take_until(name)),
-  )
-
-  // example block
-  let eg_counter = counter(chapter + "-" + title + "eg")
-  let eg_bg_color = rgb("#334155")
-  let eg(source: "", content) = [
-    #eg_counter.step()
-    #context {
-      let name = "例" + eg_counter.display() + if source != "" { "(" + source + ")" }
-      content_block(
-        eg_bg_color,
-        name,
-        content,
-        label_string(chapter, title: title, name: take_until(name)),
-      )
-    }
-  ]
-
-  // proof block
-  let proof_bg_color = black
-  let proof(name: auto, content) = block(
-    inset: (left: 0pt, right: 0pt, top: 0pt, bottom: 0pt),
-    [
-      #text(fill: proof_bg_color, weight: "bold", "证明" + if name != auto { name }) #h(
-        char_width / 2,
-        weak: true,
-      )
-      #content
-      #show math.equation: set text(font: "New Computer Modern")
-
-      #h(1fr) #text(fill: proof_bg_color)[$qed$]
-    ],
-  )
-
-  // algorithm block
-  let algo_bg_color = rgb("#0e7490")
-  let algo(name, content) = content_block(
-    algo_bg_color,
-    name,
-    content,
-    label_string(chapter, title: title, name: take_until(name)),
-  )
-
-  // a hyperlink to <chapter-title-name>
-  let tp(chapter, title, name, desc: auto, omit_chapter: false, omit_title: false) = {
-    let desc = if desc != auto {
-      desc
-    } else {
-      if omit_chapter and omit_title {
-        label_string(name)
-      } else if omit_chapter {
-        label_string(title, name: name)
-      }
-    }
-    link(
-      label(label_string(chapter, title: title, name: name)),
-      text(weight: "medium")[#show math.equation.where(block: false): it => box(
-          it,
-          stroke: (bottom: 0.168mm + black),
-          outset: (bottom: 0.516mm),
-          inset: (left: 1mm, right: 1mm),
+// must give a permanent `label_name`
+#let content_block(text_color: white, background_color, label_name, title, title_en: auto, content) = {
+  let cur_inset = 14pt
+  [
+    #v(1em)
+    #shadow(radius: 2pt, dx: 1pt, dy: 1pt, blur: 2pt, fill: background_color.lighten(80%))[
+      #block(
+        fill: background_color.lighten(95%),
+        stroke: 0.5pt + background_color.lighten(50%),
+        radius: 2pt,
+        width: 100%,
+        inset: cur_inset,
+        above: 2em,
+      )[
+        #place(
+          top + left,
+          dx: 10pt - cur_inset,
+          dy: -10pt - cur_inset,
+          rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
+            #text(weight: "regular", fill: text_color, title)
+            #space_12
+            #text(weight: "regular", fill: text_color, if title_en != auto {
+              "(" + title_en + ")"
+            })
+          ],
         )
-        #underline(desc)],
-    )
-  }
-  // a hyperlink with "chapter-" already filled
-  let ctp(title, name, desc: auto) = tp(
-    chapter,
-    title,
-    name,
-    desc: desc,
-    omit_chapter: true,
-  )
-  // a hyperlink with "chapter-title-" already filled
-  let cttp(name, desc: auto) = tp(
-    chapter,
-    title,
-    name,
-    desc: desc,
-    omit_chapter: true,
-    omit_title: true,
-  )
-
-  (def: def, prop: prop, thm: thm, cor: cor, eg: eg, proof: proof, algo: algo, tp: tp, ctp: ctp, cttp: cttp)
+        #content
+      ]
+    ]
+    #label(label_name)
+  ]
 }
 
-#let keyword(content) = text(content, weight: "medium")
+// definition block
+#let def_bg_color = rgb("#243daf")
+#let def(label_name, title, title_en: auto, content) = content_block(
+  def_bg_color,
+  label_name,
+  title,
+  title_en: title_en,
+  content,
+)
+
+// proposition block
+#let prop_counter = counter("prop")
+#let prop_bg_color = rgb("#d97706")
+#let prop(label_name, content) = [
+  #prop_counter.step()
+  #context {
+    let name = "命题" + prop_counter.display()
+    content_block(
+      prop_bg_color,
+      name,
+      label_name,
+      content,
+    )
+  }
+]
+
+// theorem block
+#let thm_bg_color = rgb("#be123c")
+#let thm(label_name, title, title_en: auto, content) = content_block(
+  thm_bg_color,
+  label_name,
+  title,
+  title_en: title_en,
+  content,
+)
+
+// corollary block
+#let cor_bg_color = rgb("#7e22ce")
+#let cor(label_name, title, title_en: auto, content) = content_block(
+  cor_bg_color,
+  label_name,
+  title,
+  title_en: title_en,
+  content,
+)
+
+// algorithm block
+#let algo_bg_color = rgb("#0e7490")
+#let algo(label_name, title, title_en: auto, content) = content_block(
+  algo_bg_color,
+  label_name,
+  title,
+  title_en: title_en,
+  content,
+)
+
+// proof block
+#let proof_bg_color = black
+#let proof(name: auto, content) = block(
+  inset: (left: 0pt, right: 0pt, top: 0pt, bottom: 0pt),
+  [
+    #text(fill: proof_bg_color, weight: "bold", "证明" + if name != auto { name }) #h(
+      char_width_2,
+      weak: true,
+    )
+    #content
+    #show math.equation: set text(font: "New Computer Modern")
+
+    #h(1fr) #text(fill: proof_bg_color)[$qed$]
+  ],
+)
+
+// example block
+#let eg_bg_color = rgb("#334155")
+#let eg(label_name, source: auto, content) = [
+  #context content_block(
+    eg_bg_color,
+    label_name,
+    "例" + if source != auto { "(" + source + ")" },
+    content,
+  )
+]
+
+#let tp(label_name, desc) = link(
+  label(label_name),
+  text(weight: "medium")[#show math.equation.where(block: false): it => box(
+      it,
+      stroke: (bottom: 0.168mm + black),
+      outset: (bottom: 0.516mm),
+      inset: (left: char_width_8, right: char_width_8),
+    )
+    #underline(desc)],
+)
+
+#let keyword(content, content_en: auto) = {
+  text(content, weight: "medium")
+  space_12
+  text(weight: "regular", if content_en != auto {
+    "(" + content_en + ")"
+  })
+}
 
 // most frequently used equation
 #let eq(content, rmargin: true) = {
-  h(char_width / 8, weak: true) + content + if rmargin { h(char_width / 12, weak: true) }
+  space_8 + content + if rmargin { space_8 }
 }
 
 // when the equation is followed by a punctuation
@@ -252,7 +224,7 @@
   math.equation(block: true, numbering: "(1)", content)
 }
 
-#let eqrect(content) = markrect(outset: char_width / 8, content);
+#let eqrect(content) = markrect(outset: char_width_8, content);
 
 #let rfact(x, n) = $#x^overline(#n)$
 #let ffact(x, n) = $#x^underline(#n)$
@@ -260,4 +232,4 @@
 #let stirling1(n, k) = $vec(#n, #k, delim: "[")$
 #let stirling2(n, k) = $vec(#n, #k, delim: "{")$
 #let eulerian(n, k) = $vec(#n, #k, delim: chevron)$
-#let multinom(n, ..k) = $binom(#n, #k.pos().join("," + h(char_width / 4, weak: true)))$
+#let multinom(n, ..k) = $binom(#n, #k.pos().join("," + space_4))$
