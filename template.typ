@@ -88,7 +88,7 @@
 #let begin_title(chapter, title) = { [= #title #label(chapter + "-" + title)] }
 
 // must give a permanent `label_name`
-#let content_block(text_color: white, background_color, label_name, title, title_en: auto, content) = {
+#let content_block(text_color: white, background_color, label_name, title, en: auto, content) = {
   let cur_inset = 14pt
   [
     #v(1em)
@@ -107,7 +107,7 @@
           dy: -10pt - cur_inset,
           rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
             #set text(fill: text_color)
-            #title #space_div_12 #if title_en != auto { "(" + title_en + ")" }
+            #title #space_div_12 #if en != auto { "(" + en + ")" }
           ],
         )
         #content
@@ -119,11 +119,11 @@
 
 // definition block
 #let def_bg_color = rgb("#243daf")
-#let def(label_name, title, title_en: auto, content) = content_block(
+#let def(label_name, title, en: auto, content) = content_block(
   def_bg_color,
   label_name,
   title,
-  title_en: title_en,
+  en: en,
   content,
 )
 
@@ -142,31 +142,31 @@
 
 // theorem block
 #let thm_bg_color = rgb("#be123c")
-#let thm(label_name, title, title_en: auto, content) = content_block(
+#let thm(label_name, title, en: auto, content) = content_block(
   thm_bg_color,
   label_name,
   title,
-  title_en: title_en,
+  en: en,
   content,
 )
 
 // corollary block
 #let cor_bg_color = rgb("#7e22ce")
-#let cor(label_name, title, title_en: auto, content) = content_block(
+#let cor(label_name, title, en: auto, content) = content_block(
   cor_bg_color,
   label_name,
   title,
-  title_en: title_en,
+  en: en,
   content,
 )
 
 // algorithm block
 #let algo_bg_color = rgb("#0e7490")
-#let algo(label_name, title, title_en: auto, content) = content_block(
+#let algo(label_name, title, en: auto, content) = content_block(
   algo_bg_color,
   label_name,
   title,
-  title_en: title_en,
+  en: en,
   content,
 )
 
