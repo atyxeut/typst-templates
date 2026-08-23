@@ -208,10 +208,10 @@
     #underline(desc)],
 )
 
-#let keyword(content, content_en: auto) = {
+#let keyword(content, en: auto) = {
   text(content, weight: "medium")
   space_div_12
-  text(if content_en != auto { "(" + content_en + ")" })
+  text(if en != auto { "(" + en + ")" })
 }
 
 // numbered block equation
