@@ -197,16 +197,27 @@
   )
 ]
 
-#let tp(label_name, desc) = link(
-  label(label_name),
-  text(weight: "medium")[#show math.equation.where(block: false): it => box(
-      it,
-      stroke: (bottom: 0.2mm + black),
-      outset: (bottom: 0.7mm),
-      inset: (left: char_width_div_8, right: char_width_div_8),
+// a hyperlink to a label
+#let tp(label_name, ..desc) = {
+  let target = label(label_name)
+  if desc.pos().len() == 0 {
+    context {
+      let prop_number = prop_counter.at(query(target).first().location()).first()
+      link(target, underline("命题" + str(prop_number)))
+    }
+  } else if desc.pos().len() == 1 {
+    link(
+      target,
+      text(weight: "medium")[#show math.equation.where(block: false): it => box(
+          it,
+          stroke: (bottom: 0.2mm + black),
+          outset: (bottom: 0.7mm),
+          inset: (left: char_width_div_8, right: char_width_div_8),
+        )
+        #underline(desc.pos().first())],
     )
-    #underline(desc)],
-)
+  }
+}
 
 #let keyword(content, en: auto) = {
   text(content, weight: "medium")
