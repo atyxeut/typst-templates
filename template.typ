@@ -131,15 +131,12 @@
 #let prop_bg_color = rgb("#d97706")
 #let prop(label_name, content) = [
   #prop_counter.step()
-  #context {
-    let name = "命题" + prop_counter.display()
-    content_block(
-      prop_bg_color,
-      name,
-      label_name,
-      content,
-    )
-  }
+  #context content_block(
+    prop_bg_color,
+    label_name,
+    "命题" + prop_counter.display(),
+    content,
+  )
 ]
 
 // theorem block
