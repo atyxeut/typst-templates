@@ -44,10 +44,21 @@
   let page_width = 30 * char_width + margin_x * 2
   set page(width: page_width, height: auto, margin: (x: margin_x, y: margin_y))
 
-  show math.equation: set text(font: math_font)
+  show math.equation: set text(weight: "regular", font: (math_font, regular_text_font))
   show math.equation.where(block: false): it => {
     show regex("[,:;]"): char => char + space_div_4
-    space_div_8 + it + space_div_8
+    let last_char(expression) = {
+      if expression.has("children") {
+        last_char(expression.children.last())
+      } else if expression.has("body") {
+        last_char(expression.body)
+      } else if expression.has("text") {
+        expression.text.clusters().last()
+      } else {
+        repr(expression)
+      }
+    }
+    space_div_8 + it + if last_char(it) not in "，：；、。？" { space_div_8 }
   }
 
   show raw: set text(font: code_font, size: char_height * 0.75, features: (calt: 0))
@@ -203,14 +214,6 @@
   text(content, weight: "medium")
   space_div_12
   text(if content_en != auto { "(" + content_en + ")" })
-}
-
-// when the equation is followed by a punctuation, remove the right space
-#let eqs(content) = {
-  show math.equation.where(block: false): it => {
-    space_div_8 + it
-  }
-  content
 }
 
 // numbered block equation
