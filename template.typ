@@ -226,7 +226,8 @@
 }
 
 #let keyword(content, en: auto) = {
-  text(content, weight: "medium")
+  set text(weight: "medium")
+  text(content)
   space_div_12
   text(if en != auto { "(" + en + ")" })
 }
