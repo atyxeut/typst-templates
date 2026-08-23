@@ -53,13 +53,19 @@
         last_char(expression.children.last())
       } else if expression.has("body") {
         last_char(expression.body)
+      } else if expression.has("base") {
+        last_char(expression.base)
       } else if expression.has("text") {
-        expression.text.clusters().last()
+        if type(expression.text) == str {
+          expression.text.clusters().last()
+        } else {
+          last_char(expression.text)
+        }
       } else {
         repr(expression)
       }
     }
-    space_div_8 + it + if last_char(it) not in "，：；、。？" { space_div_8 }
+    space_div_8 + it + if last_char(it.body) not in "，：；、。？" { space_div_8 }
   }
 
   show raw: set text(font: code_font, size: char_height * 0.75, features: (calt: 0))
