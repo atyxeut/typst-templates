@@ -22,9 +22,10 @@
 
 #let style(body) = {
   set heading(numbering: none)
-  show heading.where(level: 1): it => text(it, size: char_height * 1.5)
-  show heading.where(level: 2): it => text(it, size: char_height * 1.3)
-  show heading.where(level: 3): it => text(it, size: char_height * 1.1)
+  show heading: set text(weight: "bold", font: bold_text_font)
+  show heading.where(level: 1): set text(size: char_height * 1.5)
+  show heading.where(level: 2): set text(size: char_height * 1.3)
+  show heading.where(level: 3): set text(size: char_height * 1.1)
 
   set text(
     cjk-latin-spacing: auto,
@@ -76,7 +77,7 @@
 #let begin_chapter(chapter) = {
   [
     #align(center)[
-      #show heading: it => text(chapter, size: char_height * 1.7, weight: "bold", font: bold_text_font)
+      #show heading: it => text(chapter, size: char_height * 1.7)
       #heading(chapter)
     ]
     #line(length: 100%, stroke: 0.75pt + black)
