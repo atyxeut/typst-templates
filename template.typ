@@ -209,7 +209,7 @@
   if desc.pos().len() == 0 {
     context {
       let prop_number = prop_counter.at(query(target).first().location()).first()
-      link(target, underline("命题" + str(prop_number)))
+      link(target, text(weight: "medium", underline("命题" + str(prop_number))))
     }
   } else if desc.pos().len() == 1 {
     link(
