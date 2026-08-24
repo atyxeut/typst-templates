@@ -46,10 +46,13 @@
   set page(width: page_width, height: auto, margin: (x: margin_x, y: margin_y))
 
   show math.equation: set text(weight: "regular", font: (math_font, regular_text_font))
-  show math.equation.where(block: false): it => {
+  show math.equation: it => {
     show regex("[,:;]"): char => char + space_div_4
+    it
+  }
+  show math.equation.where(block: false): it => {
     let last_char(expression) = {
-      if expression.has("children") {
+      if expression.has("children") and expression.children.len() > 0 {
         last_char(expression.children.last())
       } else if expression.has("body") {
         last_char(expression.body)
@@ -65,7 +68,7 @@
         repr(expression)
       }
     }
-    space_div_8 + it + if last_char(it.body) not in "，：；、。？" { space_div_8 }
+    space_div_8 + it + if last_char(it.body) not in ("，", "：", "；", "、", "。", "？") { space_div_8 }
   }
 
   show raw: set text(font: code_font, size: char_height * 0.75, features: (calt: 0))
