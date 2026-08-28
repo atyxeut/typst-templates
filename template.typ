@@ -189,7 +189,7 @@
       weak: true,
     )
     #content
-    #show math.equation: set text(font: "New Computer Modern")
+    #show math.equation: set text(font: "New Computer Modern Math")
 
     #h(1fr) #text(fill: proof_bg_color)[$qed$]
   ],
