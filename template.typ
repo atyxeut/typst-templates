@@ -71,7 +71,13 @@
     space_div_8 + it + if last_char(it.body) not in ("，", "：", "；", "、", "。", "？") { space_div_8 }
   }
 
-  show raw: set text(font: code_font, size: char_height * 0.75, features: (calt: 0))
+  let code_font_size_factor = 0.75
+  show raw: set text(
+    font: code_font,
+    size: char_height * code_font_size_factor,
+    features: (calt: 0),
+    spacing: char_width_div_2 * code_font_size_factor,
+  )
   show raw.where(block: false): box.with(
     fill: luma(240),
     inset: (x: 4pt, y: 1pt),
