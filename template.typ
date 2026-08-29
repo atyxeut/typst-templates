@@ -139,15 +139,15 @@
 // proposition block
 #let prop_counter = counter("prop")
 #let prop_bg_color = rgb("#d97706")
-#let prop(label_name, content) = [
-  #prop_counter.step()
-  #context content_block(
+#let prop(label_name, content) = {
+  prop_counter.step()
+  context content_block(
     prop_bg_color,
     label_name,
     "命题" + prop_counter.display(),
     content,
   )
-]
+}
 
 // theorem block
 #let thm_bg_color = rgb("#be123c")
@@ -196,36 +196,40 @@
 )
 
 // example block
+#let eg_counter = counter("eg")
 #let eg_bg_color = rgb("#334155")
-#let eg(label_name, source: auto, content) = [
-  #context content_block(
+#let eg(label_name, source: auto, content) = {
+  eg_counter.step()
+  context content_block(
     eg_bg_color,
     label_name,
-    "例" + if source != auto { "(" + source + ")" },
+    "例" + eg_counter.display() + if source != auto { " (" + source + ")" },
     content,
   )
-]
+}
 
 // a hyperlink to a label
 #let tp(label_name, ..desc) = {
+  set text(weight: "medium")
+
   let target = label(label_name)
-  if desc.pos().len() == 0 {
-    context {
-      let prop_number = prop_counter.at(query(target).first().location()).first()
-      link(target, text(weight: "medium", underline("命题" + str(prop_number))))
+  let content = if desc.pos().len() == 0 {
+    if label_name.starts-with("prop-") {
+      context underline("命题" + str(prop_counter.at(query(target).first().location()).first()))
+    } else if label_name.starts-with("eg-") {
+      context underline("例" + str(eg_counter.at(query(target).first().location()).first()))
     }
   } else if desc.pos().len() == 1 {
-    link(
-      target,
-      text(weight: "medium")[#show math.equation.where(block: false): it => box(
-          it,
-          stroke: (bottom: 0.2mm + black),
-          outset: (bottom: 0.7mm),
-          inset: (left: char_width_div_8, right: char_width_div_8),
-        )
-        #underline(desc.pos().first())],
-    )
+    text[#show math.equation.where(block: false): it => box(
+        it,
+        stroke: (bottom: 0.2mm + black),
+        outset: (bottom: 0.7mm),
+        inset: (left: char_width_div_8, right: char_width_div_8),
+      )
+      #underline(desc.pos().first())]
   }
+
+  link(target, content)
 }
 
 #let keyword(content, en: auto) = {
