@@ -8,17 +8,24 @@
 #let code_font = "Maple Mono NL NF"
 
 #let char_width = 4.8mm
-#let char_width_div_2 = char_width / 2;
-#let char_width_div_4 = char_width / 4;
-#let char_width_div_8 = char_width / 8;
-#let char_width_div_12 = char_width / 12;
+#let char_width_over_2 = char_width / 2;
+#let char_width_over_4 = char_width / 4;
+#let char_width_over_8 = char_width / 8;
+#let char_width_over_12 = char_width / 12;
+#let char_width_over_16 = char_width / 16;
 
+// font size
 #let char_height = char_width / 1.2
 
-#let space_div_2 = h(char_width_div_2, weak: true)
-#let space_div_4 = h(char_width_div_4, weak: true)
-#let space_div_8 = h(char_width_div_8, weak: true)
-#let space_div_12 = h(char_width_div_12, weak: true)
+#let space_over_2 = h(char_width_over_2, weak: true)
+#let space_over_4 = h(char_width_over_4, weak: true)
+#let space_over_8 = h(char_width_over_8, weak: true)
+#let space_over_12 = h(char_width_over_12, weak: true)
+#let space_over_16 = h(char_width_over_16, weak: true)
+
+#let equation_no_spacing_flag = state("equation_no_spacing", false)
+#let equation_no_left_spacing_flag = state("equation_no_left_spacing", false)
+#let equation_no_right_spacing_flag = state("equation_no_right_spacing", false)
 
 #let style(body) = {
   set heading(numbering: none)
@@ -29,7 +36,7 @@
 
   set text(
     cjk-latin-spacing: auto,
-    spacing: char_width_div_4,
+    spacing: char_width_over_4,
     size: char_height,
     font: regular_text_font,
     weight: "regular",
@@ -47,10 +54,15 @@
 
   show math.equation: set text(weight: "regular", font: (math_font, regular_text_font))
   show math.equation: it => {
-    show regex("[,:;]"): char => char + space_div_4
+    show regex("[,:;]"): char => char + space_over_4
     it
   }
+
+  // add default spacing around equations
   show math.equation.where(block: false): it => {
+    if equation_no_spacing_flag.get() {
+      return it
+    }
     let last_char(expression) = {
       if expression.has("children") and expression.children.len() > 0 {
         last_char(expression.children.last())
@@ -68,7 +80,15 @@
         repr(expression)
       }
     }
-    space_div_8 + it + if last_char(it.body) not in ("，", "：", "；", "、", "。", "？") { space_div_8 }
+    let it = (
+      if not equation_no_left_spacing_flag.get() { space_over_16 }
+        + it
+        + if not equation_no_right_spacing_flag.get()
+          and (last_char(it.body) not in ("，", "：", "；", "、", "。", "？")) {
+          space_over_16
+        }
+    )
+    it
   }
 
   let code_font_size_factor = 0.75
@@ -76,7 +96,7 @@
     font: code_font,
     size: char_height * code_font_size_factor,
     features: (calt: 0),
-    spacing: char_width_div_2 * code_font_size_factor,
+    spacing: char_width_over_2 * code_font_size_factor,
   )
   show raw.where(block: false): box.with(
     fill: luma(240),
@@ -122,7 +142,7 @@
           dy: -10pt - cur_inset,
           rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
             #set text(fill: text_color)
-            #title #space_div_12 #if en != auto { "(" + en + ")" }
+            #title #space_over_12 #if en != auto { "(" + en + ")" }
           ],
         )
         #content
@@ -191,7 +211,7 @@
   inset: (left: 0pt, right: 0pt, top: 0pt, bottom: 0pt),
   [
     #text("证明" + if name != auto { name }, fill: proof_bg_color, weight: "bold", font: bold_text_font) #h(
-      char_width_div_2,
+      char_width_over_2,
       weak: true,
     )
     #content
@@ -214,35 +234,81 @@
   )
 }
 
-// a hyperlink to a label
+// a hyperlink to a label with description
 #let tp(label_name, ..desc) = {
   set text(weight: "medium")
-
   let target = label(label_name)
+
   let content = if desc.pos().len() == 0 {
     if label_name.starts-with("prop-") {
       context underline("命题" + str(prop_counter.at(query(target).first().location()).first()))
     } else if label_name.starts-with("eg-") {
       context underline("例" + str(eg_counter.at(query(target).first().location()).first()))
     }
-  } else if desc.pos().len() == 1 {
-    text[#show math.equation.where(block: false): it => box(
+  } else {
+    text[#show math.equation.where(block: false): it => {
+        let left_flag = equation_no_left_spacing_flag.get()
+        let right_flag = equation_no_right_spacing_flag.get()
+        box(
+          it,
+          stroke: (bottom: 0.2mm + black),
+          outset: (bottom: 0.7mm),
+          inset: (
+            left: if not left_flag { char_width_over_16 } else { 0mm },
+            right: if not right_flag { char_width_over_16 } else { 0mm },
+          ),
+        )
+      }
+      #underline(desc.pos().first())]
+  }
+  link(target, content)
+}
+
+// a hyperlink to a label with given description
+#let tpd(label_name, desc) = {
+  set text(weight: "medium")
+  let target = label(label_name)
+
+  link(target, text[#show math.equation.where(block: false): it => {
+      let left_flag = equation_no_left_spacing_flag.get()
+      let right_flag = equation_no_right_spacing_flag.get()
+      box(
         it,
         stroke: (bottom: 0.2mm + black),
         outset: (bottom: 0.7mm),
-        inset: (left: char_width_div_8, right: char_width_div_8),
+        inset: (
+          left: if not left_flag { char_width_over_16 } else { 0mm },
+          right: if not right_flag { char_width_over_16 } else { 0mm },
+        ),
       )
-      #underline(desc.pos().first())]
-  }
-
-  link(target, content)
+    }
+    #underline(desc)])
 }
 
 #let keyword(content, en: auto) = {
   set text(weight: "medium")
   text(content)
-  space_div_12
+  space_over_12
   text(if en != auto { "(" + en + ")" })
+}
+
+// remove default spacing before/after an equation
+#let nseq(equation, keep: none) = {
+  if keep == none {
+    equation_no_spacing_flag.update(true)
+  } else if keep == "left" {
+    equation_no_right_spacing_flag.update(true)
+  } else if keep == "right" {
+    equation_no_left_spacing_flag.update(true)
+  }
+  equation
+  if keep == none {
+    equation_no_spacing_flag.update(false)
+  } else if keep == "left" {
+    equation_no_right_spacing_flag.update(false)
+  } else if keep == "right" {
+    equation_no_left_spacing_flag.update(false)
+  }
 }
 
 // numbered block equation
@@ -250,7 +316,7 @@
   math.equation(block: true, numbering: "(1)", content)
 }
 
-#let eqrect(content) = markrect(outset: char_width_div_8, content);
+#let eqrect(content) = markrect(outset: char_width_over_8, content);
 
 #let rfact(x, n) = $#x^overline(#n)$
 #let ffact(x, n) = $#x^underline(#n)$
@@ -258,4 +324,4 @@
 #let stirling1(n, k) = $vec(#n, #k, delim: "[")$
 #let stirling2(n, k) = $vec(#n, #k, delim: "{")$
 #let eulerian(n, k) = $vec(#n, #k, delim: chevron)$
-#let multinom(n, ..k) = $binom(#n, #k.pos().join("," + space_div_4))$
+#let multinom(n, ..k) = $binom(#n, #k.pos().join("," + space_over_4))$
