@@ -123,6 +123,16 @@
   ]
 }
 
+// axiom block
+#let axiom_bg_color = rgb("#047857")
+#let axiom(label_name, title, en: auto, content) = content_block(
+  axiom_bg_color,
+  label_name,
+  title,
+  en: en,
+  content,
+)
+
 // definition block
 #let def_bg_color = rgb("#243daf")
 #let def(label_name, title, en: auto, content) = content_block(
@@ -178,10 +188,10 @@
 
 // proof block
 #let proof_bg_color = black
-#let proof(name: none, content) = block(
+#let proof(name: auto, content) = block(
   inset: (left: 0pt, right: 0pt, top: 0pt, bottom: 0pt),
   [
-    #text("证明" + if name != none { name }, fill: proof_bg_color, weight: "bold", font: bold_text_font)
+    #text("证明" + if name != auto { name }, fill: proof_bg_color, weight: "bold", font: bold_text_font)
     #h(char_width_over_2, weak: true)
     #content
     #show math.equation: set text(font: fallback_math_font)
@@ -193,12 +203,12 @@
 // example block
 #let eg_counter = counter("eg")
 #let eg_bg_color = rgb("#334155")
-#let eg(label_name, source: none, content) = {
+#let eg(label_name, source: auto, content) = {
   eg_counter.step()
   context content_block(
     eg_bg_color,
     label_name,
-    "例" + " " + eg_counter.display() + if source != none { " " + "(" + source + ")" },
+    "例" + " " + eg_counter.display() + if source != auto { " " + "(" + source + ")" },
     content,
   )
 }
