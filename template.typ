@@ -27,9 +27,10 @@
 #let style(body) = {
   set heading(numbering: none)
   show heading: set text(weight: "bold", font: bold_text_font)
-  show heading.where(level: 1): set text(size: char_height * 1.5)
-  show heading.where(level: 2): set text(size: char_height * 1.3)
-  show heading.where(level: 3): set text(size: char_height * 1.1)
+  show heading.where(level: 1): set text(size: char_height * 1.7)
+  show heading.where(level: 2): set text(size: char_height * 1.5)
+  show heading.where(level: 3): set text(size: char_height * 1.3)
+  show heading.where(level: 4): set text(size: char_height * 1.1)
 
   set text(
     cjk-latin-spacing: none,
@@ -83,16 +84,19 @@
 
 #let begin_chapter(chapter) = {
   [
-    #align(center)[
-      #show heading: it => text(chapter, size: char_height * 1.7)
-      #heading(chapter)
-    ]
+    #let pos = chapter.position(regex("[A-Z]"))
+    #let display = if pos != none {
+      chapter.slice(0, pos) + " " + chapter.slice(pos, chapter.len())
+    } else {
+      chapter
+    }
+    #align(center)[= #display]
     #line(length: 100%, stroke: 0.75pt + black)
     #label(chapter)
   ]
 }
 
-#let begin_title(chapter, title) = { [= #title #label(chapter + "-" + title)] }
+#let begin_title(chapter, title) = { [== #title #label(chapter + "-" + title)] }
 
 // must give a permanent `label_name`
 #let content_block(text_color: white, background_color, label_name, title, en: auto, content) = {
