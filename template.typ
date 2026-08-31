@@ -217,16 +217,20 @@
   )
 }
 
+#let get_title(label_name) = context {
+  let target = label(label_name)
+  if label_name.starts-with("prop-") {
+    "命题" + " " + str(prop_counter.at(query(target).first().location()).first())
+  } else if label_name.starts-with("eg-") {
+    "例" + " " + str(eg_counter.at(query(target).first().location()).first())
+  }
+}
+
 // a hyperlink to a label with description
 #let tp(label_name, ..desc) = {
   set text(weight: "medium")
-  let target = label(label_name)
   let content = if desc.pos().len() == 0 {
-    if label_name.starts-with("prop-") {
-      context underline("命题" + " " + str(prop_counter.at(query(target).first().location()).first()))
-    } else if label_name.starts-with("eg-") {
-      context underline("例" + " " + str(eg_counter.at(query(target).first().location()).first()))
-    }
+    underline(get_title(label_name))
   } else {
     text[#show math.equation.where(block: false): it => box(
         // directly adding an underline does not work
@@ -236,7 +240,7 @@
       )
       #underline(desc.pos().first())]
   }
-  link(target, content)
+  link(label(label_name), content)
 }
 
 // numbered block equation
