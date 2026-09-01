@@ -48,7 +48,10 @@
 
   let (margin_x, margin_y) = (10mm, 8mm)
   let page_width = 30 * char_width + margin_x * 2
-  set page(width: page_width, height: auto, margin: (x: margin_x, y: margin_y))
+  set page(width: page_width, height: auto, margin: (x: margin_x, y: margin_y), numbering: (cur_number, ..) => text(
+    font: "Libertinus Serif",
+    numbering("1", cur_number),
+  ))
 
   show math.equation: set text(weight: "regular", font: (math_font, regular_text_font))
   show math.equation: it => {
