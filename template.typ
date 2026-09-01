@@ -270,3 +270,5 @@
 #let stirling2(n, k) = $vec(#n, #k, delim: "{")$
 #let eulerian(n, k) = $vec(#n, #k, delim: chevron)$
 #let multinom(n, ..k) = $binom(#n, #k.pos().join("," + space_over_4))$
+
+#let span(..vectors) = $upright("span")(#vectors.pos().join("," + space_over_4))$
