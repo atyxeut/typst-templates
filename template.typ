@@ -46,7 +46,7 @@
     linebreaks: "simple",
   )
 
-  let (margin_x, margin_top, margin_bottom) = (10mm, 6mm, 10mm)
+  let (margin_x, margin_top, margin_bottom) = (10mm, 6mm, 14mm)
   let page_width = 30 * char_width + margin_x * 2
   set page(
     width: page_width,
@@ -56,9 +56,11 @@
       cur_number,
       ..,
     ) => text(
+      fill: luma(100),
       font: "Libertinus Serif",
       numbering("1", cur_number),
     ),
+    footer-descent: margin_top,
   )
 
   show math.equation: set text(weight: "regular", font: (math_font, regular_text_font))
