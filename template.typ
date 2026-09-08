@@ -65,7 +65,7 @@
 
   show math.equation: set text(weight: "regular", font: (math_font, regular_text_font))
   show math.equation: it => {
-    show regex("[,:;]"): char => char + space_over_4
+    // show regex("[,:;]"): char => char + space_over_4
     it
   }
 
