@@ -1,5 +1,4 @@
 #import "@preview/mannot:0.4.0": *
-#import "@preview/shadowed:0.3.0": *
 #import "@preview/zebraw:0.6.3": *
 
 #let regular_text_font = "LXGW WenKai GB"
@@ -116,25 +115,23 @@
   let cur_inset = 14pt
   [
     #v(1em)
-    #shadow(radius: 2pt, dx: 1pt, dy: 1pt, blur: 2pt, fill: background_color.lighten(80%))[
-      #block(
-        fill: background_color.lighten(95%),
-        stroke: 0.5pt + background_color.lighten(50%),
-        radius: 2pt,
-        width: 100%,
-        inset: cur_inset,
-        above: 2em,
-      )[
-        #place(
-          top + left,
-          dx: 10pt - cur_inset,
-          dy: -10pt - cur_inset,
-          rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
-            #text(fill: text_color, title + if en != auto { " " + "(" + stext(en) + ")" })
-          ],
-        )
-        #content
-      ]
+    #block(
+      fill: background_color.lighten(95%),
+      stroke: 0.5pt + background_color.lighten(50%),
+      radius: 2pt,
+      width: 100%,
+      inset: cur_inset,
+      above: 2em,
+    )[
+      #place(
+        top + left,
+        dx: 10pt - cur_inset,
+        dy: -10pt - cur_inset,
+        rect(fill: background_color.lighten(20%), radius: 1pt, inset: 2.5pt, outset: 2pt)[
+          #text(fill: text_color, title + if en != auto { " " + "(" + stext(en) + ")" })
+        ],
+      )
+      #content
     ]
     #label(label_name)
   ]
