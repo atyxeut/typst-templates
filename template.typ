@@ -270,3 +270,4 @@
 
 #let span(..vectors) = $upright("span")(#vectors.pos().join("," + space_over_4))$
 #let rank(matrix) = $upright("rank")(matrix)$
+#let iprod(v0, v1) = $lr(chevron #v0, #v1 chevron.r)$
